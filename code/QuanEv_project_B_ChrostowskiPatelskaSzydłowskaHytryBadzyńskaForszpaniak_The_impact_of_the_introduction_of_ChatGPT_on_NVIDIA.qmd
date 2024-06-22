@@ -1,0 +1,666 @@
+---
+title: "Quantitative Evaluation Methods - Paper"
+format: html
+editor: visual
+---
+
+# The impact of the introduction of ChatGPT on NIVIDIA's stock prices. RDD method {style="text-align: center"}
+
+[Group B\
+Gabriel Chrostowski, Aleksandra Patelska, Aleksandra Szydłowska, Patryk Hytry, Klaudia Badzyńska, Weronika Forszpaniak]{style="text-align: center"}\
+
+[**Quantitative Evaluation Methods\
+**]{style="text-align: center"}
+
+[**Assignment\
+- group project**]{style="text-align: center"}**\
+**
+
+[**Economic data analytics,\
+II, sem. 4, year 2023/24\
+ADE.S2.13491C.Z4\
+**]{style="text-align: center"}
+
+[Poznań June 2024]{style="text-align: center"}
+
+## [1. SUMMARY]{.smallcaps} {style="background-color: green; color: white"}
+
+The study examines 25 years of data to analyze the relationship between NVIDIA's stock, Bitcoin, and the NASDAQ index. The rise of AI technologies like ChatGPT, which rely on NVIDIA hardware, could caused a significant increase in NVIDIA's stock. The hypothesis is that the introduction of ChatGPT significantly impacted NVIDIA's stock prices. Data from the Stooq database covers the period from July 11, 2010, to May 26, 2024, including variables for NVIDIA's stock prices, Bitcoin price, and NASDAQ index price. The study uses the Regression Discontinuity Design to analyze the impact of ChatGPT's introduction on NVIDIA's stock prices. Robustness checks were conducted to ensure the validity of the results. ARIMA models were implemented to eliminate the influence of past values. Descriptive analysis shows that the outcome and Bitcoin variables have right-skewed distributions, with values concentrated near the mean, while the NASDAQ variable has a flatter distribution. Outliers are present in the outcome and btc variables. Positive correlations exist between all variable pairs. The ARIMA model accurately reflects the trend of NVIDIA's stock prices. ChatGPT initially negatively impacted NVIDIA's stock prices but had a positive impact after an adaptation period. Bitcoin is not statistically significant, while the NASDAQ index significantly affects NVIDIA's stock prices, emphasizing the importance of the tech market's overall condition. The project is limited by its narrow focus on the impact of ChatGPT and the NASDAQ index on NVIDIA's stock, without considering competitors like AMD or Intel. Weekly data may not reflect short-term market fluctuations. Future research should examine ChatGPT's long-term impact on NVIDIA, compare it to competitors, and predict how emerging technologies like augmented reality (AR) and virtual reality (VR) may impact NVIDIA
+
+## [2. Introduction]{.smallcaps} {style="background-color: green; color: white"}
+
+### [2.1. Justification for the choice of the topic]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+NVIDIA's graphics chips find application across various sectors beyond cryptocurrency mining, including gaming, scientific research, and professional graphics. The high demand for these chips sometimes caused shortages, especially during the COVID-19 pandemic. More people wanted personal electronics and gaming devices that use NVIDIA's GPUs, leading to a big increase in sales. But the global shortage of semiconductors made it hard for NVIDIA to keep up with demand (NVIDIA Corporation, 2021).
+
+As the pandemic started to ease, the initial high demand for consumer electronics subsided, resulting in a temporary decline in NVIDIA's stock price as the market adjusted. But now, the stock is rising quickly again because more people are using NVIDIA's chips for artificial intelligence. The renewed growth is fueled by the expanding AI market, where NVIDIA's GPUs play a crucial role in training and operating sophisticated AI models (Deloitte, 2022).
+
+OpenAI's chatbot, ChatGPT, is very popular because it can be used in many different areas like customer service, education, and content creation. Its ability to generate text has made it a valuable tool for both businesses and individuals (Brown et al., 2020). Other AI tools, such as those used for image and speech recognition, predictive analytics, and autonomous systems, are also getting a lot of attention. All of these AI solutions depend on dedicated graphics processors to perform the intricate computations they necessitate.
+
+In this area, NVIDIA is the top company, offering the fastest GPUs for AI tasks. The company's GPUs are designed specifically for deep learning and machine learning tasks, establishing them as the preferred option for AI researchers and developers. AI is also used in data centers, cloud computing, healthcare, finance, and making autonomous vehicles and advanced driver-assistance systems (Jouppi et al., 2017). NVIDIA's GPUs play a crucial role in the automotive industry, powering self-driving cars and advanced driver-assistance systems through its DRIVE platform, which requires substantial computational power (NVIDIA Corporation, 2020). Because of this, there's been a significant increase in demand for NVIDIA's AI-focused graphics cards.
+
+NVIDIA continues to innovate with new technologies and designs, particularly in machine learning and deep learning, solidifying its leadership in the AI hardware market. The company's ongoing development of cutting-edge architectures ensures it maintains its position as a pioneer in AI hardware innovation.
+
+The growing need for AI applications across different industries, along with NVIDIA's ongoing advancements in GPU technology, has led to a big increase in demand for NVIDIA's specialized graphics processors. NVIDIA's continuous improvements in GPU designs keep it ahead in the AI hardware market, meeting the rising demands of AI applications effectively.
+
+### [2.2. Objective of the analysis, research question]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+**Scopes of analysis:**
+
+**1. Temporal scope:** The analysis spans from 11 July 2010 to May 26, 2024, covering almost 14 years. It includes:
+
+**Pre-intervention period:** Before late November 2022, providing a baseline for NVIDIA's stock performance unaffected by the intervention.
+
+**Intervention period:** Late November 2022 when the ChatGPT intervention occurred, a significant event in the analysis.
+
+**Post-intervention period:** From November 27, 2022, to May 26, 2024, examining how NVIDIA's stock prices responded after the intervention.
+
+**2. Spatial scope:** The analysis focuses on NVIDIA's stock prices, Bitcoin prices, and the Nasdaq index. This approach helps understand:
+
+**Market trends:** How changes in Bitcoin and Nasdaq influence NVIDIA's stock movements.
+
+**External impact:** The broader market conditions influencing NVIDIA's stock performance.
+
+This spatial dimension expands the analysis to include external factors that affect NVIDIA's stock, beyond the company's internal dynamics.
+
+**Research Question:** Has the introduction of ChatGPT influenced NVIDIA's stock prices, considering the Bitcoin exchange rate and the NASDAQ index?
+
+**Hypothesis:** The introduction of ChatGPT had a substantial impact on NASDAQ, given NVIDIA's prominent role as a leading producer of graphics cards crucial for advancements in artificial intelligence.
+
+## [3. Data]{.smallcaps} {style="background-color: green; color: white"}
+
+### [3.1. Source data]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+The data used in this project comes from the Stooq database. This applies to data on Nvidia and Bitcoin share prices. Data on NASDAQ Index - a market capitalization-weighted index of more than 2,500 stocks listed on the Nasdaq stock exchange, heavily weighted toward the technology sector - were also taken from the Stooq database.
+
+Stooq is a Polish website offering OHLCV data (an aggregated form of market data including Open, High, Low, Close and Volume). According to the Quantstart website, Stooq have approximately 21,332 global securities and ETFs, 1,980 currency pairs and 132 cryptocurrencies. They also offer data on global indices, commodities and bonds. All data offered can be accessed via a web interface and data can be downloaded in CSV format. For stocks listed on US exchanges, it is also possible to obtain some basic data such as earnings price and market value. Stooq does not disclose general information about how data is collected or its sources.
+
+In the project we used three separate tables from the Stooq database regarding the Bitcoin price, the Nvidia share price and the NASDAQ price, which were combined into one table in Excel.
+
+**In the original database we relied on the following variables:**
+
+-   **Date** -- this column contained a weekly time series from July 11, 2010 to May 26, 2024. We are dealing here with a quantitative interval scale of data measurement.
+
+-   **Open** -- the column contained share prices during the opening phase of the trading session, featuring data on a ratio scale. This applies to all three variables: the Bitcoin price, Nvidia stock prices and the NASDAQ price.
+
+**We made several changes to the variables in the project:**
+
+-   **time** -- the variable was created from the "Date" column in the original database. It is expressed on a ratio scale. Each day has an assigned number. It contains a weekly time series from July 11, 2010, which is 1, to May 26, 2024, which is 725.
+
+-   **outcome** -- the variable contains the prices of Nvidia shares in the opening phase of the trading session. The measurement scale of this variable is ratio.
+
+-   **btc** -- the variable contains the Bitcoin price in the opening phase of the trading session. The measurement scale of this variable is ratio.
+
+-   **nasdaq** -- the variable contains the price of the NASDAQ index in the opening phase of the trading session. The measurement scale of this variable is ratio.
+
+```{r warning=FALSE}
+library(readxl)
+df <- read_excel("baza_danych_quant.xlsx", sheet = "Arkusz2")
+print(df)
+```
+
+Analysis of the impact of introducing ChatGPT on NVIDIA, requires consideration of various variables to grasp the full context of this influence. Thus, we decidecd to incorporates three key variables: NVIDIA stock prices (outcome), Bitcoin's exchange rate (btc), and the NASDAQ index (nasdaq).
+
+The first significant variable is NVIDIA's stock price, serving as a direct indicator of the market's response to the introduction of new technology associated with ChatGPT. According to a study conducted by Zheng and Feng (2024), there is significant positive cumulative abnormal returns during the release of ChatGPT-3.5 and ChatGPT-4. This finding underscores the substantial impact of new ChatGPT releases on NVIDIA's market valuation as a leading GPU manufacturer. It indicates that the market views the introduction of ChatGPT as a positive catalyst for further growth and profitability for NVIDIA, emphasizing the importance of considering NVIDIA's stock prices as a key variable in the analysis.
+
+The second variable, Bitcoin's price, is crucial because of Bitcoin's role as an important digital asset that can provide information about overall market trends that could impact NVIDIA. In this context, a study was carried out by Yang and Liu (2023), where the correlation between the Bitcoin price and NVIDIA was estimated using the DCC-GARCH model, indicating the existence of a relationship between these two variables. Fluctuations in the correlation coefficient suggested a dynamic relationship between NVIDIA and Bitcoin, which could be shaped by various market factors, including changes in Bitcoin price, mining demand, market conditions, and technological innovations.
+
+The third important variable is the NASDAQ index, which is a measure of the health of the technology sector in the United States and around the world. NVIDIA is a technology company listed on NASDAQ that may influence the valuation of NVIDIA stock and provide information about the impact on the price of NVIDIA stock regardless of the introduction of ChatGPT.
+
+## [4. Method]{.smallcaps} {style="background-color: green; color: white"}
+
+### [4.1. Description of the methods]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+**Regression Discontinuity Design**
+
+For our analysis we have decided to apply the Regression Discontinuity Design (RDD) to investigate the effect of the introduction of ChatGPT on NVIDIA's stock prices. The RDD is particularly useful in this context as it allows us to identify causal effects by comparing observations lying closely on either side of a cutoff point, which in this case is the date of ChatGPT's introduction to the market.
+
+The basic premise of RDD is that units (in this case, daily observations of NVIDIA's stock price) just above and just below the cutoff are similar in all respects except for the treatment effect, which here is the introduction of ChatGPT. This method helps mitigate biases that could result from unobserved confounders.
+
+For validating the findings of the RDD analysis it is important to perform robustness checks. They ensure that the estimated treatment effect is not sensitive to specific model choices or assumptions, thereby increasing the credibility and reliability of the results.
+
+Robustness checks are conducted to:
+
+1.  **Verify Assumptions**: Ensure the key assumptions of the RDD are not violated, such as the continuity assumption and the appropriateness of the chosen bandwidth.
+
+2.  **Test Sensitivity**: Assess how sensitive the results are to changes in the model specification, such as different bandwidths or kernels.
+
+3.  **Rule Out Alternatives**: Demonstrate that the observed treatment effect is not driven by other confounding factors.
+
+The choice of bandwidth is crucial in RDD as it determines the range of data points around the cutoff that are used in the analysis. Robustness checks involve testing different bandwidths to ensure that the estimated treatment effect is consistent across various choices.
+
+**ARIMA**
+
+At the beginning of our analysis, we noticed high autocorrelation which refers to the correlation of a time series with its own past values. In simpler terms, it measures the relationship between a variable's current value and its previous values. In time series analysis, autocorrelation can pose significant problems for statistical modeling. Standard statistical tests assume that observations are independent. Autocorrelation violates this assumption, leading to biased estimates and incorrect inferences. It can also mislead the significance tests by inflating the significance of predictors in regression models, making them appear more statistically significant than they truly are.
+
+In the context of our analysis autocorrelation could mean that the stock prices were influenced by their own past values. If not properly accounted for we might have incorrectly attributed the changes in stock prices to the introduction of ChatGPT, when in fact they were partially due to the natural fluctuations in the stock price series.
+
+To eliminate this problem we have decided to perform more advanced time series analysis using ARIMA models. ARIMA stands for AutoRegressive Integrated Moving Average. It is a popular time series forecasting method that combines three components:
+
+-   **AutoRegression (AR)**: is a specific type of regression model where, the dependent variable depends on past values of itself. This means that the current values are correlated with values in the previous time-steps,
+
+-   **Integrated (I)**: represents the differencing of raw observations to allow the time series to become stationary (i.e., data values are replaced by the difference between the data values and the previous values),
+
+-   **Moving Average (MA)**: The relationship between an observation and a residual error from a moving average model applied to lagged observations.
+
+Each component in ARIMA functions as a parameter with a standard notation. For ARIMA models, a standard notation would be ARIMA with p, d, and q. The parameters can be defined as:
+
+-   **(p)** is called the lag order. It represents the number of prior lag observations we include in the model i.e. the number of lags which have a significant correlation with the current observation,
+
+-   **(d)** is the number of times the raw observations are differenced; also known as the degree of differencing,
+
+-   **(q)** represents the size of the moving window i.e. the number of lag observation errors which have a significant impact on the current observation. Its similar to the lag order **(p)**, but it considers errors instead of the observations themselves.
+
+ARIMA models are flexible and can capture a wide range of temporal structures, making them suitable for forecasting time series data. By including external regressors, the model can account for exogenous influences on the time series, improving forecast accuracy and explanatory power.
+
+**Model Specification**
+
+**Dependent Variable**:
+
+-   outcome: NVIDIA stock prices
+
+**Independent Variables**:
+
+-   time: Time period index
+
+-   treatment: Binary indicator for the intervention (ChatGPT introduction)
+
+-   timesincetreat: Time since intervention
+
+-   btc: Bitcoin prices
+
+-   nasdaq: NASDAQ index values
+
+The level of statistical significance adopted in the analysis was 5% (α = 0.05). This means that a p-value less than 0.05 indicates that the results are statistically significant and we can reject the null hypothesis of no effect.
+
+### [4.2. Test procedure]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+**Package installation**
+
+```{r warning=FALSE}
+# install.packages("readxl")
+# install.packages("forecast")
+# install.packages("ggcorrplot")
+# install.packages("rdrobust")
+# install.packages("psych")
+# install.packages("purr")
+library(readxl)
+library(forecast)
+library(ggcorrplot)
+library(rdrobust)
+library(psych)
+library(purrr)
+```
+
+**Data preparation**
+
+```{r warning=FALSE}
+df <- read_excel("baza_danych_quant.xlsx", sheet = "Arkusz2")
+df$time <- as.numeric(df$time)
+df$outcome <- as.numeric(df$outcome)
+df$btc <- as.numeric(gsub(",", ".", df$btc))
+df$nasdaq <- as.numeric(df$nasdaq)
+```
+
+**Plot of NVIDIA stock prices over time with a vertical line indicating the intervention**
+
+```{r warning=FALSE}
+plot(df$time, df$outcome, type = "l", col = "blue", xlab = "Time", ylab = "NVIDIA Stock Prices")
+abline(v = 647, col = "red")
+```
+
+**Creating TREATMENT (intervention) and TIMESINCETREATMENT (trend after intervention) variables**
+
+```{r warning=FALSE}
+n <- 725
+interven <- 647
+df$treatment <- ifelse(df$time >= interven, 1, 0)
+df$timesincetreat <- ifelse(df$time >= interven, df$time - interven + 1, 0)
+```
+
+**Creating an ARIMA model with the bitcoin rate as a control variable**
+
+```{r warning=FALSE}
+arima_model <- auto.arima(df$outcome, xreg = as.matrix(cbind(df$time, df$treatment, df$timesincetreat, df$btc, df$nasdaq)))
+```
+
+**Model results**
+
+```{r warning=FALSE}
+summary(arima_model)
+```
+
+**Independently calculated coefficients and p-values**
+
+```{r warning=FALSE}
+coefs <- coef(arima_model)
+se <- sqrt(diag(vcov(arima_model)))
+t_values <- coefs / se
+p_values <- 2 * (1 - pnorm(abs(t_values)))
+```
+
+**Creating a data frame and displaying coefficients and p-values**
+
+```{r warning=FALSE}
+data.frame(
+  Coefficient = coefs,
+  Std_Error = se,
+  t_value = t_values,
+  p_value = p_values
+)
+```
+
+**Using the built ARIMA model to make predictions**
+
+```{r warning=FALSE}
+pred <- forecast(arima_model, xreg = as.matrix(cbind(df$time, df$treatment, df$timesincetreat, df$btc, df$nasdaq)))
+```
+
+**Creating a new data frame for an alternative forecast (i.e. what NIVIDIA's share prices would have been without the intervention)**
+
+```{r warning=FALSE}
+new_df <- data.frame(
+  time = df$time,
+  treatment = rep(0, n),
+  timesincetreat = rep(0, n),
+  btc = df$btc,
+  nasdaq = df$nasdaq
+)
+```
+
+**Creating a counterfactual scenario**
+
+```{r warning=FALSE}
+pred_cf <- forecast(arima_model, xreg = as.matrix(new_df))
+```
+
+**Chart of the current data with a counterfactual scenario**
+
+```{r warning=FALSE}
+plot(df$time, df$outcome, col = gray(0.2, 0.2), pch = 19, xlim  = c(1, 725), ylim = c(min(df$outcome), max(df$outcome)),
+     xlab = "Time", ylab = "NVIDIA Stock Prices")
+lines(df$time, pred$mean, col = "blue", lwd = 3)
+lines(df$time, pred_cf$mean, col = "yellow", lwd = 3, lty = 5)
+abline(v = interven, col = "red", lty = 2)
+```
+
+**Checking the residuals for autocorrelation (the histogram of residuals should resemble a normal distribution)**
+
+```{r warning=FALSE}
+checkresiduals(arima_model)
+```
+
+**Analysis of the impact of ChatGPT's introduction on NVIDIA's stock prices over different time periods: half a year, one year, and one and a half years**
+
+```{r warning=FALSE}
+perform_analysis <- function(df, interven, pre_period, post_period) {
+  # Limiting the data to the appropriate time range
+  df_subset <- df[df$time >= (interven - pre_period) & df$time <= (interven + post_period), ]
+
+  # Creating treatment and timesincetreat variables
+  df_subset$treatment <- ifelse(df_subset$time >= interven, 1, 0)
+  df_subset$timesincetreat <- ifelse(df_subset$time >= interven, df_subset$time - interven + 1, 0)
+
+  # Creating an ARIMA model with Bitcoin and Nasdaq prices as control variables
+  arima_model <- auto.arima(df_subset$outcome, xreg = as.matrix(cbind(df_subset$time, df_subset$treatment, df_subset$timesincetreat, df_subset$btc, df_subset$nasdaq)))
+
+  # Model results
+  print(summary(arima_model))
+
+  # Independently calculated coefficients and p-values
+  coefs <- coef(arima_model)
+  se <- sqrt(diag(vcov(arima_model)))
+  t_values <- coefs / se
+  p_values <- 2 * (1 - pnorm(abs(t_values)))
+
+  # Creating a data frame and displaying coefficients and p-values
+  coef_table <- data.frame(
+    Coefficient = coefs,
+    Std_Error = se,
+    t_value = t_values,
+    p_value = p_values
+  )
+  print(coef_table)
+
+  # Using the built ARIMA model to make predictions 
+  pred <- forecast(arima_model, xreg = as.matrix(cbind(df_subset$time, df_subset$treatment, df_subset$timesincetreat, df_subset$btc, df_subset$nasdaq)))
+
+  # Creating a new data frame for the alternative forecast (i.e. what NIVIDIA stock prices would have been without the intervention)
+  new_df <- data.frame(
+    time = df_subset$time,
+    treatment = rep(0, nrow(df_subset)),
+    timesincetreat = rep(0, nrow(df_subset)),
+    btc = df_subset$btc,
+    nasdaq = df_subset$nasdaq
+  )
+
+  # Creating a counterfactual scenario
+  pred_cf <- forecast(arima_model, xreg = as.matrix(new_df))
+
+  # Chart of the current data with a counterfactual scenario
+  plot(df_subset$time, df_subset$outcome, col = gray(0.2, 0.2), pch = 19, xlim = c(min(df_subset$time), max(df_subset$time)), ylim = c(min(df_subset$outcome), max(df_subset$outcome)),
+       xlab = "Time", ylab = "NVIDIA Stock Prices")
+  lines(df_subset$time, pred$mean, col = "blue", lwd = 3)
+  lines(df_subset$time, pred_cf$mean, col = "yellow", lwd = 3, lty = 5)
+  abline(v = interven, col = "red", lty = 2)
+
+  # Checking the residuals for autocorrelation
+  checkresiduals(arima_model)
+}
+# Intervention parameters
+interven <- 647
+
+# Analysis for different periods
+perform_analysis(df, interven, 26, 26)
+perform_analysis(df, interven, 52, 52)
+perform_analysis(df, interven, 78, 78)
+```
+
+**Robustness checks**
+
+```{r warning=FALSE}
+
+# Function to perform robustness analysis
+perform_robust_analysis <- function(df, outcome_var, running_var, cutoff, bandwidth = NULL, kernel = "triangular") {
+  # Rdrobust analysis
+  rd_result <- rdrobust(y = df[[outcome_var]], x = df[[running_var]], c = cutoff, h = bandwidth, kernel = kernel)
+  print(summary(rd_result))
+  
+  # Visualization of results
+  rdplot(y = df[[outcome_var]], x = df[[running_var]], c = cutoff)
+}
+
+# Basic analysis with automatically selected bandwidth
+perform_robust_analysis(df, "outcome", "time", interven)
+
+# Analysis with different bandwidths
+optimal_bandwidth <- 28.717
+perform_robust_analysis(df, "outcome", "time", interven, bandwidth = optimal_bandwidth)
+perform_robust_analysis(df, "outcome", "time", interven, bandwidth = optimal_bandwidth * 2)
+perform_robust_analysis(df, "outcome", "time", interven, bandwidth = optimal_bandwidth / 2)
+
+# Analysis with different kernels
+perform_robust_analysis(df, "outcome", "time", interven, kernel = "epanechnikov")
+perform_robust_analysis(df, "outcome", "time", interven, kernel = "uniform")
+
+# Checking different bandwiths with rdbwselect
+bandwidth_selection <- rdbwselect(y = df$outcome, x = df$time, c = interven, all = TRUE)
+print(summary(bandwidth_selection))
+
+# Calculating the correlation matrix
+correlation_matrix <- cor(df[, c("outcome", "btc", "nasdaq", "treatment", "timesincetreat")], use = "complete.obs")
+
+# Displaying the correlation matrix
+print(correlation_matrix)
+
+# Visualization of the correlation matrix
+ggcorrplot(correlation_matrix, method = "circle", type = "lower", lab = TRUE)
+```
+
+## [5. Results]{.smallcaps} {style="background-color: green; color: white"}
+
+### [5.1. Exploratory analyses]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+```{r warning=FALSE}
+#data description
+
+#Create adjusted data frame for description
+df_result <- df %>% dplyr::select(-treatment, -timesincetreat, -time,-outcome1,-btc1) 
+#Describing the data 
+descriptive_stats <- describe(df_result)  
+#Print the description
+print(descriptive_stats)
+```
+
+The outcome variable (the opening value of Nvidia shares) has a range of values from 2.13 to 939.41, which gives us a range of 937.28. The mean value for this variable is 94.95, while the median is 33.87. The standard deviation is equal to 33.87. The skewness and kurtosis for the variable are 2.90 and 9.61, respectively.
+
+For the btc variable reflecting the value of one bitcoin in terms of US dollars, the range of values is from 0.05 to 70,864.50 which gives us a range of 70,864.45. The mean for the value is 11442.44 with a median of 2524.06 and a standard deviation of 16831.49. The skewness and kurtosis for the variable are 1.63 and 1.73, respectively.
+
+For the nasdaq variable representing the stock market index of companies, the range of values starts at 2122.28 and ends at 16,702.02 which gives us a range of 14,579.74. The mean for the variable is 7353.22 and the median is 6173.29 with a standard deviation of 4136.89. The skewness and kurtosis for the variable are 0.63 and -0.90, respectively.
+
+```{r warning=FALSE}
+#Histograms  
+
+# Function to create histograms for all columns 
+create_histograms <- function(df_result) {   
+  # Iterate over each column in the data frame using purrr::map   
+  map(names(df_result), function(col) {     
+    # Create a histogram for the current column     
+    p <- ggplot(df, aes_string(x = col)) +       geom_histogram(binwidth = 30, fill = "blue", color = "black") +        labs(title = paste("Histogram of", col), x = col, y = "Frequency")          
+    # Print the histogram     
+    print(p)   }) }  
+# Call the function 
+create_histograms(df_result)
+```
+
+The graphs above show the distributions of the values of each variable. The visualizations, along with the skewness and kurtosis values shown in the table above, give us a preliminary picture of the data.
+
+The skewness for the outcome variable is equal to 2.90, which means that the distribution of the data for this variable is not symmetrical but right-handed. This may mean that most of the values of the variable are relatively small, but there are a few large values extending the tail of the distribution to the right. The kurtosis is 9.61, which indicates the pointedness of the data distribution. The values are thus more tightly clustered around the mean than would be the case with a normal distribution
+
+Skewness for the btc variable is equal to 1.63, which means that the distribution of data for this variable is not symmetric but right-handed. Although not as strongly as in the case of the outcome variable. The kurtosis is 1.73, which indicates the flatness of the data distribution. The values are therefore less clustered around the mean than would be the case with a normal distribution.
+
+The skewness for the nasdaq variable is equal to 0.63, which means that the distribution of the data for this variable is not symmetrical, but right-skewed. Although least compared to other variables. The kurtosis is -0.90, which indicates the greatest flatness of the data distribution compared to other variables. The values are therefore less clustered around the mean than in the case of a normal distribution.
+
+```{r warning=FALSE}
+#boxplots  
+
+# Function to create boxplots for all columns 
+create_boxplots <- function(df_result) {   
+  # Iterate over each column in the data frame using purrr::map   
+  map(names(df_result), function(col) {    
+    # Create a boxplot for the current column     
+    p <- ggplot(df, aes_string(y = col)) +       geom_boxplot(fill = "blue", color = "black") +       labs(title = paste("Boxplot of", col), y = col)          
+    # Print the boxplot    
+    print(p)   }) }  
+# Call the function 
+create_boxplots(df_result)
+```
+
+Boxplots of variables coincide with previous results from the table and as visualized by histograms.
+
+For the outcome variable, we observe a rightward skewness of the distribution and a high concentration of data for lower values. We can also see individual outliers from the rest, they take high values. At the same time, we do not observe outliers in the lower part of the data.
+
+For the btc variable, we observe very similar results as for the outcome variable. There are also top outliers and only a top whisker.
+
+For the nasdaq variable, the situation looks different. We observe the upper and lower whiskers, which means that the data goes outside the main distribution on both sides. Instead, we do not observe outliers, as was the case with the other two variables.
+
+```{r warning=FALSE}
+#Correlation  
+
+# Calculating the correlation matrix 
+correlation_matrix <- cor(df[, c("outcome", "btc", "nasdaq")], use = "complete.obs")  
+print(correlation_matrix) 
+# Visualizing the correlation matrix 
+ggcorrplot(correlation_matrix, method = "circle", type = "lower", lab = TRUE)
+```
+
+The chart above shows pairs of correlations of the dependent variable (outcome) and independent variables (btc and nasdaq).
+
+There is a strong correlation of 0.82 between the dependent variable outcome and the independent variable btc.
+
+There is an almost equally strong correlation of 0.79 between the dependent variable outcome and the independent variable nasdaq.
+
+### [5.2. Presentation of results]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+```{r warning=FALSE}
+plot(df$time, df$outcome, type = "l", col = "blue", xlab = "Time", ylab = "NVIDIA Stock Prices")
+abline(v = 647, col = "red")
+```
+
+Chart above shows NVIDIA's stock prices over time with the point of intervention (the introduction of ChatGPT) marked with a vertical red line. The chart is intended to show how share prices developed before and after the "intervention."
+
+```{r warning=FALSE}
+plot(df$time, df$outcome, col = gray(0.2, 0.2), pch = 19, xlim  = c(1, 725), ylim = c(min(df$outcome), max(df$outcome)),
+     xlab = "Time", ylab = "NVIDIA Stock Prices")
+lines(df$time, pred$mean, col = "blue", lwd = 3)
+lines(df$time, pred_cf$mean, col = "yellow", lwd = 3, lty = 5)
+abline(v = interven, col = "red", lty = 2)
+```
+
+This graph compares NVIDIA's actual stock prices (black dots) with the fitted values from the ARIMA model (blue line) and counterfactual predictions (yellow dashed line). The counterfactual line shows what the model predicts might have happened if the intervention had not occurred, i.e., if hataGPT had not been disseminated.
+
+```{r warning=FALSE}
+#Coefficients table
+  
+coef_table <- data.frame(     Coefficient = coefs,     Std_Error = se,     t_value = t_values,     p_value = p_values   ) 
+coef_table$Coefficient <- format(coef_table$Coefficient, scientific = FALSE)
+coef_table$Std_Error <- format(coef_table$Std_Error, scientific = FALSE)
+coef_table$t_value <- format(coef_table$t_value, scientific = FALSE)
+coef_table$p_value <- format(coef_table$p_value, scientific = FALSE)
+print(coef_table) 
+
+```
+
+Autoregression (AR) - The current value of the dependent variable is linearly dependent on its previous values. The autoregressive model assumes that the observed value at a certain point in time can be expressed as a linear combination of its previous values and random noise. Statisticaly significant coefficients (small p-values) indicate that the past values of the series have a significant impact on the present value.
+
+-   ar1:
+
+The coefficient for ar1 is 0.4475823, indicating that for each unit change in previous values (lag 1), the expected change in the current value is approximately 0.448. The standard error for this coefficient is 0.2164. The t-value for ar1 is 2.0681, with a corresponding p-value of 0.0386. The interpretation reveals that the coefficient is statistically significant as the p-value (0.0386) is less than 0.05.
+
+-   ar2:
+
+The coefficient for ar2 is 0.3032526, indicating that for each unit change in previous values (lag 2), the expected change in the current value is about 0.303. The standard error for this coefficient is 0.1479. The t-value for ar2 is 2.0502, with a corresponding p-value of 0.0403. The interpretation reveals that the coefficient is statistically significant as the p-value (0.0403) is less than 0.05.
+
+-   ar3:
+
+The coefficient for ar3 is 0.6744791, indicating that for each unit change in previous values (lag 3), the expected change in the current value is about 0.674. The standard error for this coefficient is 0.08794. The t-value for ar3 is 7.6701, with a corresponding p-value of 1.7097e-14. The interpretation reveals that the coefficient is statistically significant as the p-value (1.7097e-14) is significantly less than 0.05.
+
+-   ar4 - not statistically significant
+
+-   ar5
+
+    The coefficient for ar5 is -0.5113551, indicating that for each unit change in previous values (lag 5), the expected change in the current value is approximately -0.511. The standard error for this coefficient is 0.1331. The t-value for ar5 is -3.8411, with a corresponding p-value of 0.0001225. This interpretation reveals that the coefficient is statistically significant as the p-value (0.0001225) is much less than 0.05.
+
+Moving Average (MA) - The current value of the dependent variable is expressed as the average of the previous values of the model errors. In a moving average model, the observed value at a given point in time is assumed to be a weighted average of model errors from previous periods. This technique is designed to smooth time series and identify long-term trends or patterns, eliminating short-term fluctuations.
+
+-   ma1:
+
+For ma1, the coefficient of 0.550164 suggests that for each unit change in model errors (lag 1), the expected change in the current value is approximately 0.550. The standard error associated with this coefficient is 0.2198. With a t-value of 2.5034, ma1 demonstrates statistical significance. This conclusion is supported by a p-value of 0.0123, which falls below the conventional significance threshold of 0.05, indicating that the coefficient for ma1 is indeed statistically significant.
+
+-   ma2: not statistically significant.
+
+-   ma3: not statistically significant.
+
+-   ma4:
+
+The coefficient for ma4 is -0.5380696, indicating that for each unit change in model errors (lag 4), the expected change in the current value is approximately -0.538. The standard error associated with this coefficient is 0.1164. With a t-value of -4.6245, ma4 demonstrates statistical significance. This conclusion is supported by a p-value of 0.000003755, which falls well below the conventional significance threshold of 0.05, indicating that the coefficient for ma4 is indeed statistically significant.
+
+Base value of the variable:
+
+-   intercept
+
+The intercept coefficient is approximately -62.37743, indicating that when all other variables are held constant, the intercept value is around -62.37743. The standard error associated with this coefficient is 9.5643938036. With a t-value of -6.52183813, the intercept demonstrates statistical significance. This conclusion is supported by a p-value of 0.00000000006945089, significantly less than 0.05, suggesting that the intercept is statistically significant.
+
+Exogenous variables:
+
+-   xreg1 (time):
+
+The coefficient of -0.2039916 suggests that for each unit change in the exogenous variable xreg1, the expected change in the current value is approximately -0.204. The standard error associated with this coefficient is 0.0347. With a t-value of -5.8865, the coefficient demonstrates statistical significance. Additionally, the p-value for xreg1 is 3.944521e-09, significantly lower than 0.05, indicating that the coefficient for xreg1 is statistically significant.
+
+-   xreg2 (intervention):
+
+The coefficient of -17.40806 suggests that for each unit change in the exogenous variable xreg2, the expected change in the current value is approximately -17.40806. The standard error associated with this coefficient is 8.6561. With a t-value of -2.0111, the coefficient does not demonstrate statistical significance. However, the p-value for xreg2 is 0.04432, which is less than 0.05, suggesting that the coefficient for xreg2 may be statistically significant.
+
+-   xreg3 (after intervention):
+
+The coefficient of 7.965781 suggests that for each unit change in the exogenous variable xreg3, the expected change in the current value is approximately 7.965781. The standard error associated with this coefficient is 0.3848. With a t-value of 20.7017, the coefficient demonstrates statistical significance. Additionally, the p-value for xreg3 is 0.00000, significantly lower than 0.05, indicating that the coefficient for xreg3 is statistically significant.
+
+-   xreg4 (bitcoin): not statistically significant.
+
+-   xreg5 (nasdaq):
+
+The coefficient of 0.02708808 suggests that for each unit change in the exogenous variable xreg5, the expected change in the current value is approximately 0.02708808. The standard error associated with this coefficient is 0.0013818. With a t-value of 19.6033, the coefficient demonstrates statistical significance. Additionally, the p-value for xreg5 is 0.00000, significantly lower than 0.05, indicating that the coefficient for xreg5 is statistically significant.
+
+Analysis of residuals:
+
+```{r warning=FALSE}
+
+#Arima model residuals 
+checkresiduals(arima_model)
+```
+
+The histogram of the residuals resembles a normal distribution. What is more, the residual plot shows no obvious patterns, indicating a good model fit. The ACF graph shows that the residuals fall within the range indicated by the blue dashed lines, which means that the residuals are not autocorrelated.
+
+## [6. Interpretation]{.smallcaps} {style="background-color: green; color: white"}
+
+### [6.1. Interpretation of results in the context of the research question]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+The research question posed in the first part of our report is: 'Did the introduction of ChatGPT affect the prices of NVIDIA shares after taking into account the bitcoin price and the NASDAQ index?' By analyzing the results of the ARIMA model, several key conclusions can be drawn that answer this question:
+
+-   The coefficient for the xreg1 variable (time) was -0.2039916. This suggests that for each unit change in the exogenous variable xreg1, the expected change in the current value is approximately -0.204. Whereas, the p-value for xreg1 is 3.944521e-09, significantly lower than 0.05, indicating that the coefficient for xreg1 is statistically significant. This implies that over time, there is a slight negative trend in the NVIDIA stock prices, independent of other factors considered in the model;
+
+-   The coefficient for xreg2 (intervention) in our model was -17.40806, suggesting that introducing ChatGPT into our model had an initial negative impact on NVIDIA stock prices. However, the p-value for this coefficient is 0.04432, indicating that this effect is statistically significant. This may imply that without ChatGPT, Bitcoin, and overall market growth as measured by the NASDAQ, NVIDIA's stock would fall;
+
+-   The coefficient for the xreg3 variable (after the intervention) was 7.965781, suggesting that some time after the introduction of ChatGPT, NVIDIA stock prices began to increase. The p-value is very low - 0.00000, indicating high statistical significance of this impact. This may indicate a positive market reception of the technology after an initial period of uncertainty, suggesting that the market has recognized the potential of ChatGPT in the company's long-term strategy;
+
+-   The coefficient for the xreg4 variable (bitcoin) was 0.00002095983 with a p-value of 0.8998156, indicating that it is not statistically significant. This suggests that changes in Bitcoin prices do not have a significant direct impact on NVIDIA stock prices within the context of our model;
+
+-   The NASDAQ index, i.e., the xreg5 variable in our model, has a coefficient of 0.02708808 and is statistically significant (p-value is 0.00000), indicating a strong and significant impact of the NASDAQ index on NVIDIA share prices. However, this effect is weaker than the impact of the introduction of ChatGPT (lower coefficient). The NASDAQ index represents the broader technology market, and its significant influence on NVIDIA stock prices underscores the company's alignment with overall market trends;
+
+-   The ARIMA model shows that the past values of NVIDIA stock prices (ar1, ar2, ar3, ar5) have a significant impact on their current values, which is consistent with the autoregressive method. The significance of these coefficients (low p-values) indicates that the past values of the series are an important factor influencing current prices;
+
+-   The moving average components, i.e., ma1 and ma4, are both significant, indicating that model errors from one previous period and four previous periods have a significant impact on the current stock price values. The lack of significance of ma2 and ma3 suggests that the additional lags in the moving average component do not add significant value to the model.
+
+In summary, the results of the analysis suggest that the introduction of ChatGPT had a significant impact on NVIDIA's stock prices, but this impact varied over time. Initially, a negative impact was observed, which then transformed into a positive one after the intervention period. The NASDAQ index also played an important role in this model. While the Bitcoin variable was not statistically significant, indicating limited direct influence on NVIDIA's stock prices, the time trend showed a slight negative trend over time. Thus, we can conclude that the hypothesis has been confirmed: the introduction of ChatGPT did affect NVIDIA's stock prices, with the NASDAQ index also being a significant factor.
+
+### [6.2. Possible explanations for the effects of other variables]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+As already presented in the earlier parts of our project and our ARIMA model, in addition to the intervention point (the introduction of ChatGPT), the xreg4 variable, i.e., the BTC price, and the xreg5 variable, i.e., the NASDAQ index, were also added. In this part, possible explanations for the effects of other variables will be presented:
+
+-   The coefficient for Bitcoin was not statistically significant. This indicates that fluctuations in Bitcoin prices do not have a significant impact on NVIDIA stock prices within the context of our model. This might be because the direct business operations of NVIDIA are not closely tied to Bitcoin prices, despite the use of NVIDIA GPUs in cryptocurrency mining. The broader market conditions and technology sector trends, as captured by the NASDAQ index, appear to be more relevant factors;
+
+-   The NASDAQ index, representing the technology stock market, showed a statistically significant impact on NVIDIA stock prices. The strong regression between NVIDIA stock prices and the NASDAQ suggests that the overall state of the technology market has a significant impact on NVIDIA stock prices. This is understandable given that NVIDIA is part of this index, and its financial performance is often seen as an indicator of broader market trends;
+
+-   Although the introduction of ChatGPT  is our point of intervention, it is also worth including an explanation of its effect here. The analyzed results showed a significant impact of the introduction of ChatGPT on NVIDIA's share prices. This may be related to the growing importance of artificial intelligence (AI) and the increased demand for graphics cards and computing technologies used in AI. The initial drop in share prices may reflect market uncertainty about the impact of new technologies, while a subsequent increase may be due to positive market reception of the technology.
+
+### [6.3. Detailed analysis for different time periods]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+**Half a year before and after** the intervention, the results indicate a significant trend over time (xreg1, p-value \< 0.05), suggesting that the overall trend over time is an important factor influencing NVIDIA stock prices. The intervention itself (xreg2, p-value \> 0.05) did not have an immediate significant impact on stock prices. However, the post-intervention variable (xreg3, p-value \< 0.05) indicates a significant change in the trend after the introduction of ChatGPT, suggesting a positive market reaction after a short period of familiarization with it. The Bitcoin price (xreg4, p-value \> 0.05) doesn't have significant effect on NVIDIA stock prices, but the NASDAQ index (xreg5, p-value \< 0.05) affects stock prices, although to a lesser extent than ChatGPT.
+
+**One year before and after** the intervention, a significant time trend is still visible (xreg1, p-value \< 0.05), indicating a continued impact of the overall trend over time on NVIDIA stock prices. The effect of the initial intervention (xreg2, p-value \> 0.05) diminishes in the medium term, while the positive impact of the introduction of ChatGPT (xreg3, p-value \< 0.05) persists. The Bitcoin price (xreg4, p-value \> 0.05) still doesn't have significant effect on NVIDIA stock prices, and the NASDAQ index (xreg5, p-value \< 0.05) influences stock prices, albeit to a lesser extent than ChatGPT.
+
+**One and a half years before and after** the intervention, the time trend (xreg1, p-value \< 0.05) remains a key factor influencing NVIDIA stock prices in the long term. The impact of the initial intervention (xreg2, p-value \> 0.05) has completely disappeared, while the lasting positive effect of introducing ChatGPT (xreg3, p-value \< 0.05) is still evident. The bitcoin price (xreg4, p-value \> 0.05) continues to not have significant effect on NVIDIA stock prices in the long term. The NASDAQ index (xreg5, p-value \< 0.05) still has a persistent impact on share prices, albeit smaller than that of ChatGPT.
+
+## [7. Discussion]{.smallcaps} {style="background-color: green; color: white"}
+
+### [7.1. Limitations of work]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+The primary limitation of the research lies in the incomplete consideration of NVIDIA's competitive landscape. While the analysis delves into NVIDIA's stock prices, it overlooks the broader context of competition from companies like AMD, Intel or Qualcomm. Ignoring these competitors could lead to an incomplete understanding of the factors influencing NVIDIA's share prices. Additionally, the use of weekly data might not capture short-term fluctuations accurately, especially in dynamic markets like cryptocurrencies and technology stocks. Weekly data may smooth out important market movements and fail to capture intra-week developments that could impact NVIDIA's stock prices.
+
+### [7.2. Further research]{.smallcaps} {style="background-color: #A9FC8F;"}
+
+When examining the impact of the introduction of ChatGPT on NVIDIA and whether Bitcoin and Nasdaq have an impact, several important research questions arise.
+
+One crucial aspect to consider is the long-term impact of ChatGPT on NVIDIA's performance. While the immediate effects on NVIDIA's stock prices are evident, it prompts inquiry into the sustainability of this positive market response over time. Are there fluctuations in ChatGPT's influence on NVIDIA's valuation, or does the positive momentum persist in the long term?
+
+It could be also checked if there are significant differences in market responses between 2 versions of chat gpt - chat gpt 3 and chat gpt 4.
+
+Beyond ChatGPT, NVIDIA is engaged in various technological advancements, including AI, gaming, and data centers. So it can be a good idea to check how do these innovations interact with the introduction of ChatGPT in influencing NVIDIA's stock prices?
+
+As mentioned in the project limitations, comparing NVIDIA's performance with its competitors in the GPU market is another crucial avenue for exploration. How does the introduction of ChatGPT affect NVIDIA relative to its competitors like for example ADM or Intel?
+
+Also given the rapid pace of technological advancements and market disruptions, anticipating future trends and innovations becomes imperative. What future trends or innovations could potentially impact NVIDIA's prices? This raises questions such as: How might the widespread adoption of augmented reality (AR) and virtual reality (VR) technologies in industries such as gaming, entertainment, and healthcare affect NVIDIA's stock prices?
+
+## [8. Bibliography]{.smallcaps} {style="background-color: green; color: white"}
+
+Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J., Dhariwal, P., ... & Amodei, D. (2020). Language Models are Few-Shot Learners.
+
+Deloitte. (2022). Tech Trends 2022: Meet Me in the Metaverse. *Deloitte Insights*. Retrieved from https://www2.deloitte.com/us/en/insights/focus/tech-trends/2022.html
+
+Hayes, A., (05.04.2024), Autoregressive Integrated Moving Average (ARIMA) Prediction Model., Investopedia, https://www.investopedia.com/terms/a/autoregressive-integrated-moving-average-arima.asp
+
+Jouppi, N. P., Young, C., Patil, N., Patterson, D., Agrawal, G., Bajwa, R., ... & Wilcox, D. (2017). In-Datacenter Performance Analysis of a Tensor Processing Unit. *ACM/IEEE 44th Annual International Symposium on Computer Architecture (ISCA)*, 1-12.
+
+Nurkholis, Z. (14.11.2023), A Practical Guide to ARIMA with auto.arima Function in R, Medium, https://medium-com.translate.goog/\@mouse3mic3/a-practical-guide-to-arima-with-auto-arima-function-in-r-252aa84232af?\_x_tr_sl=en&\_x_tr_tl=pl&\_x_tr_hl=pl&\_x_tr_pto=sc&\_x_tr_hist=true
+
+NVIDIA Corporation. (2020). NVIDIA DRIVE Platform. Retrieved from https://www.nvidia.com/en-us/self-driving-cars/drive-platform/
+
+NVIDIA Corporation. (2021). NVIDIA A100 Tensor Core GPU. Retrieved from https://www.nvidia.com/en-us/data-center/a100/
+
+Rajbhoj, A. (26.09.2019), ARIMA simplified., Medium, https://towardsdatascience.com/arima-simplified-b63315f27cbc
+
+QuantStart. An introduction to Stooq pricing data. Online access: https://www.quantstart.com/articles/an-introduction-to-stooq-pricing-data.
+
+Yang, S., & Liu, K. (2023). Nvidia and Bitcoin Linkage Study---Based on DCC-GARCH Model. *Financial Engineering and Risk Management*, Clausius Scientific Press, Canada.
+
+Zheng, Y., & Feng, Y. (2024). Impact of ChatGPT Release on High-tech Company, Evidence of NVIDIA's Stock. *Financial Engineering and Risk Management*, Clausius Scientific Press, Canada.
